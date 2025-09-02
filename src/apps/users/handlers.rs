@@ -1,7 +1,7 @@
 use actix_web::{web, HttpResponse};
-use crate::users::models::{User, KsuidSchema};
-use crate::auth::errors::AuthError;
-use crate::db::DbPool;
+use crate::apps::users::models::{User, KsuidSchema};
+use crate::core::errors::AuthError;
+use crate::core::db::DbPool;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 use sqlx::postgres::PgQueryResult;

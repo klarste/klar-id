@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Duration, Utc};
 use std::env;
 use svix_ksuid::{Ksuid, KsuidLike};
-use crate::auth::errors::AuthError;
+use crate::core::errors::AuthError;
 use utoipa::ToSchema;
 
 #[derive(Debug, Serialize, Deserialize)]

@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 // use svix_ksuid::{Ksuid, KsuidLike};
 use chrono::{DateTime, Utc};
 use utoipa::ToSchema;
-use crate::users::models::KsuidSchema;
+use crate::apps::users::models::KsuidSchema;
 
 #[derive(Debug, Serialize, Deserialize, Clone, ToSchema)]
 pub struct RefreshToken {

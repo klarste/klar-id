@@ -1,10 +1,10 @@
 use actix_web::{web, HttpResponse, Responder};
 use serde::Deserialize;
 use utoipa::ToSchema;
-use crate::users::models::{User, KsuidSchema};
-use crate::auth::jwt::{create_token_pair, verify_token, TokenPair};
-use crate::auth::errors::AuthError;
-use crate::db::DbPool;
+use crate::apps::users::models::{User, KsuidSchema};
+use crate::core::jwt::{create_token_pair, verify_token, TokenPair};
+use crate::core::errors::AuthError;
+use crate::core::db::DbPool;
 use chrono::{Utc, DateTime};
 use svix_ksuid::Ksuid;
 use sqlx::postgres::PgQueryResult;
