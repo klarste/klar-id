@@ -1,7 +1,7 @@
 use actix_web::web;
 use utoipa::OpenApi;
-use crate::auth::handlers::{register, login, refresh_token, logout};
-use crate::auth::handlers::{
+use crate::apps::auth::handlers::{register, login, refresh_token, logout};
+use crate::apps::auth::handlers::{
     __path_register,
     __path_login,
     __path_refresh_token,

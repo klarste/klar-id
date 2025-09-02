@@ -2,9 +2,9 @@ use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 use utoipa_redoc::Redoc;
 use utoipa_redoc::Servable;
-use crate::auth;
-use crate::users;
-use crate::health;
+use crate::apps::auth;
+use crate::apps::users;
+use crate::apps::health;
 
 #[derive(OpenApi)]
 #[openapi(
