@@ -1,11 +1,10 @@
+use argon2::password_hash::SaltString;
+use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
+use chrono::{DateTime, Utc};
+use rand::rngs::OsRng;
 use serde::{Deserialize, Serialize};
 use svix_ksuid::{Ksuid, KsuidLike};
-use chrono::{DateTime, Utc};
 use utoipa::ToSchema;
-use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
-use argon2::password_hash::SaltString;
-use rand::rngs::OsRng;
-
 
 #[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
 #[schema(value_type = String, example = "1srOrx2ZWZBpBUvZwXKQmoEYga2")]
@@ -29,7 +28,14 @@ pub struct User {
 }
 
 impl User {
-    pub fn new(username: String, firstname: String, lastname: String, email: Option<String>, phone: Option<String>, password: String) -> Self {
+    pub fn new(
+        username: String,
+        firstname: String,
+        lastname: String,
+        email: Option<String>,
+        phone: Option<String>,
+        password: String,
+    ) -> Self {
         Self {
             id: KsuidSchema(Ksuid::new(None, None)),
             username,
@@ -39,7 +45,8 @@ impl User {
             email_verified: false,
             phone,
             phone_verified: false,
-            password: Self::hash_password(&password).unwrap_or_else(|_| String::from("error_hashing_password")),
+            password: Self::hash_password(&password)
+                .unwrap_or_else(|_| String::from("error_hashing_password")),
             enabled: true,
             created_at: Utc::now(),
             updated_at: Utc::now(),
@@ -51,7 +58,9 @@ impl User {
         // This is more secure and avoids issues with base64 encoding
         let salt = SaltString::generate(&mut OsRng);
         let argon2 = Argon2::default();
-        Ok(argon2.hash_password(password.as_bytes(), &salt)?.to_string())
+        Ok(argon2
+            .hash_password(password.as_bytes(), &salt)?
+            .to_string())
     }
 
     pub fn verify_password(&self, password: &str) -> bool {
@@ -60,6 +69,8 @@ impl User {
             Err(_) => return false,
         };
 
-        Argon2::default().verify_password(password.as_bytes(), &parsed_hash).is_ok()
+        Argon2::default()
+            .verify_password(password.as_bytes(), &parsed_hash)
+            .is_ok()
     }
 }

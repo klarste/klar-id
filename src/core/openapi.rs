@@ -1,10 +1,10 @@
+use crate::apps::auth;
+use crate::apps::health;
+use crate::apps::users;
 use utoipa::OpenApi;
-use utoipa_swagger_ui::SwaggerUi;
 use utoipa_redoc::Redoc;
 use utoipa_redoc::Servable;
-use crate::apps::auth;
-use crate::apps::users;
-use crate::apps::health;
+use utoipa_swagger_ui::SwaggerUi;
 
 #[derive(OpenApi)]
 #[openapi(
@@ -23,11 +23,6 @@ pub struct ApiDoc;
 
 // Configure Swagger UI and ReDoc services
 pub fn configure_api_docs(cfg: &mut actix_web::web::ServiceConfig) {
-    cfg.service(
-        SwaggerUi::new("/swagger/{_:.*}")
-            .url("/openapi.json", ApiDoc::openapi()),
-    )
-    .service(
-        Redoc::with_url("/redoc", ApiDoc::openapi())
-    );
+    cfg.service(SwaggerUi::new("/swagger/{_:.*}").url("/openapi.json", ApiDoc::openapi()))
+        .service(Redoc::with_url("/redoc", ApiDoc::openapi()));
 }

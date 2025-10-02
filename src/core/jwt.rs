@@ -1,17 +1,17 @@
-use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
-use serde::{Deserialize, Serialize};
+use crate::core::errors::AuthError;
 use chrono::{DateTime, Duration, Utc};
+use jsonwebtoken::{DecodingKey, EncodingKey, Header, Validation, decode, encode};
+use serde::{Deserialize, Serialize};
 use std::env;
 use svix_ksuid::{Ksuid, KsuidLike};
-use crate::core::errors::AuthError;
 use utoipa::ToSchema;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
-    pub sub: String,  // Subject (user ID)
-    pub exp: i64,     // Expiration time
-    pub iat: i64,     // Issued at
-    pub jti: String,  // JWT ID
+    pub sub: String, // Subject (user ID)
+    pub exp: i64,    // Expiration time
+    pub iat: i64,    // Issued at
+    pub jti: String, // JWT ID
 }
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
@@ -54,7 +54,7 @@ pub fn create_token(user_id: &str, is_refresh: bool) -> Result<(String, DateTime
 
     let now = Utc::now();
     let expiry = now + Duration::seconds(expiration_seconds);
-    
+
     let claims = Claims {
         sub: user_id.to_string(),
         exp: expiry.timestamp(),
@@ -66,7 +66,8 @@ pub fn create_token(user_id: &str, is_refresh: bool) -> Result<(String, DateTime
         &Header::default(),
         &claims,
         &EncodingKey::from_secret(secret.as_bytes()),
-    ).map_err(|e| AuthError::TokenCreation(e.to_string()))?;
+    )
+    .map_err(|e| AuthError::TokenCreation(e.to_string()))?;
 
     Ok((token, expiry))
 }
@@ -83,7 +84,8 @@ pub fn verify_token(token: &str, is_refresh: bool) -> Result<Claims, AuthError> 
         token,
         &DecodingKey::from_secret(secret.as_bytes()),
         &Validation::default(),
-    ).map_err(|e| match e.kind() {
+    )
+    .map_err(|e| match e.kind() {
         jsonwebtoken::errors::ErrorKind::ExpiredSignature => AuthError::TokenExpired,
         _ => AuthError::InvalidToken(e.to_string()),
     })?;
@@ -94,9 +96,9 @@ pub fn verify_token(token: &str, is_refresh: bool) -> Result<Claims, AuthError> 
 pub fn create_token_pair(user_id: &str) -> Result<TokenPair, AuthError> {
     let (access_token, expiry) = create_token(user_id, false)?;
     let (refresh_token, _) = create_token(user_id, true)?;
-    
+
     let expires_in = (expiry - Utc::now()).num_seconds();
-    
+
     Ok(TokenPair {
         access_token,
         refresh_token,

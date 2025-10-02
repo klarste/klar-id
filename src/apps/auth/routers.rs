@@ -1,20 +1,12 @@
+use crate::apps::auth::handlers::{
+    __path_login, __path_logout, __path_refresh_token, __path_register,
+};
+use crate::apps::auth::handlers::{login, logout, refresh_token, register};
 use actix_web::web;
 use utoipa::OpenApi;
-use crate::apps::auth::handlers::{register, login, refresh_token, logout};
-use crate::apps::auth::handlers::{
-    __path_register,
-    __path_login,
-    __path_refresh_token,
-    __path_logout
-};
 
 #[derive(OpenApi)]
-#[openapi(paths(
-    register,
-    login,
-    refresh_token,
-    logout,
-))]
+#[openapi(paths(register, login, refresh_token, logout,))]
 pub struct AuthApiDoc;
 
 pub fn auth_routes(cfg: &mut web::ServiceConfig) {
@@ -23,6 +15,6 @@ pub fn auth_routes(cfg: &mut web::ServiceConfig) {
             .route("/register/", web::post().to(register))
             .route("/login/", web::post().to(login))
             .route("/refresh/", web::post().to(refresh_token))
-            .route("/logout/", web::post().to(logout))
+            .route("/logout/", web::post().to(logout)),
     );
 }

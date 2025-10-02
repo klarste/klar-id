@@ -5,25 +5,25 @@ use thiserror::Error;
 pub enum AuthError {
     #[error("Authentication failed: Invalid credentials")]
     InvalidCredentials,
-    
+
     #[error("Authentication failed: Token expired")]
     TokenExpired,
-    
+
     #[error("Authentication failed: Invalid token - {0}")]
     InvalidToken(String),
-    
+
     #[error("Token creation failed: {0}")]
     TokenCreation(String),
-    
+
     #[error("User not found")]
     UserNotFound,
-    
+
     #[error("Database error: {0}")]
     DatabaseError(String),
-    
+
     #[error("Invalid request: {0}")]
     InvalidRequest(String),
-    
+
     #[error("Resource already exists: {0}")]
     ResourceExists(String),
 }
@@ -47,14 +47,18 @@ impl ResponseError for AuthError {
                 "error": "user_not_found",
                 "message": "User not found"
             })),
-            AuthError::DatabaseError(msg) => HttpResponse::InternalServerError().json(serde_json::json!({
-                "error": "database_error",
-                "message": msg
-            })),
-            AuthError::TokenCreation(msg) => HttpResponse::InternalServerError().json(serde_json::json!({
-                "error": "token_creation_error",
-                "message": msg
-            })),
+            AuthError::DatabaseError(msg) => {
+                HttpResponse::InternalServerError().json(serde_json::json!({
+                    "error": "database_error",
+                    "message": msg
+                }))
+            }
+            AuthError::TokenCreation(msg) => {
+                HttpResponse::InternalServerError().json(serde_json::json!({
+                    "error": "token_creation_error",
+                    "message": msg
+                }))
+            }
             AuthError::InvalidRequest(msg) => HttpResponse::BadRequest().json(serde_json::json!({
                 "error": "invalid_request",
                 "message": msg
